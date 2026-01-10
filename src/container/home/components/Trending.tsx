@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getTrendingMovies, getImageUrl } from "@/lib/tmdb";
+import { getTrendingMovies, getImageUrl } from "@/services/tmdb";
 import { MovieCard } from "./MovieCard";
 
 interface TrendingProps {

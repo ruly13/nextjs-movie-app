@@ -1,6 +1,20 @@
+"use client";
+
 import { Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function Hero() {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (query.trim()) {
+      router.push(`/search?q=${encodeURIComponent(query)}`);
+    }
+  };
+
   return (
     <section className="relative w-full h-[500px] flex items-center justify-center overflow-hidden">
       {/* Background with blur/dim effect */}
@@ -24,17 +38,19 @@ export function Hero() {
           Millions of movies, TV shows and people to discover. Explore now.
         </p>
 
-        <div className="w-full max-w-2xl relative mt-8">
+        <form onSubmit={handleSearch} className="w-full max-w-2xl relative mt-8">
           <input 
             type="text" 
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder="Search for a movie, tv show, person..." 
             className="w-full h-12 pl-12 pr-32 rounded-full bg-white/95 text-black placeholder:text-gray-500 shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500/50"
           />
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-          <button className="absolute right-1 top-1 bottom-1 bg-gradient-to-r from-red-500 to-red-600 text-white px-8 rounded-full font-semibold hover:from-red-600 hover:to-red-700 transition-all shadow-md">
+          <button type="submit" className="absolute right-1 top-1 bottom-1 bg-gradient-to-r from-red-500 to-red-600 text-white px-8 rounded-full font-semibold hover:from-red-600 hover:to-red-700 transition-all shadow-md">
             Search
           </button>
-        </div>
+        </form>
       </div>
     </section>
   );
