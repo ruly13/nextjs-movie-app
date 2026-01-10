@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
-import { Bell, Search, User, X } from "lucide-react";
+import { Bell, Search, User, X, Menu } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +42,13 @@ function NavbarContent() {
     { href: "/my-list", label: "My List" },
   ];
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
   return (
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
@@ -54,7 +61,7 @@ function NavbarContent() {
 
         {/* Search Bar - Centered/Flexible */}
         {pathname !== "/" && (
-          <form onSubmit={handleSearch} className="flex-1 max-w-xl relative group">
+          <form onSubmit={handleSearch} className="flex-1 max-w-xl relative group hidden md:block">
               <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-white transition-colors" />
                   <input 
@@ -76,6 +83,16 @@ function NavbarContent() {
               </div>
           </form>
         )}
+        {/* Mobile Search Icon Toggle (if search bar hidden on mobile) - For now let's just keep search bar hidden on very small screens or make it an icon */}
+        {pathname !== "/" && (
+            <button 
+                onClick={() => router.push('/search')}
+                className="md:hidden text-gray-300 hover:text-white"
+            >
+                <Search className="w-5 h-5" />
+            </button>
+        )}
+        
         {pathname === "/" && <div className="flex-1" />}
 
         {/* Desktop Nav Links */}
@@ -102,13 +119,51 @@ function NavbarContent() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-4 shrink-0">
-            <button className="text-gray-300 hover:text-white transition-colors">
+            <button className="text-gray-300 hover:text-white transition-colors hidden sm:block">
                 <Bell className="w-5 h-5" />
             </button>
-            <div className="w-8 h-8 bg-zinc-800 rounded-full overflow-hidden flex items-center justify-center border border-white/10">
+            <div className="w-8 h-8 bg-zinc-800 rounded-full overflow-hidden flex items-center justify-center border border-white/10 hidden sm:flex">
                 <User className="w-5 h-5 text-zinc-400" />
             </div>
+            
+            {/* Mobile Menu Toggle */}
+            <button 
+                className="lg:hidden text-gray-300 hover:text-white transition-colors p-1"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+            <div className="absolute top-16 left-0 w-full bg-black/95 backdrop-blur-xl border-b border-white/10 p-4 flex flex-col gap-4 lg:hidden animate-in slide-in-from-top-2 duration-200">
+                {navLinks.map((link) => {
+                    const isActive = link.href === "/" 
+                    ? pathname === "/" 
+                    : pathname.startsWith(link.href);
+                    
+                    return (
+                    <Link 
+                        key={link.href}
+                        href={link.href} 
+                        className={cn(
+                        "text-lg font-medium py-2 px-4 rounded-lg transition-colors",
+                        isActive ? "bg-red-600/10 text-red-500" : "text-gray-300 hover:bg-white/5 hover:text-white"
+                        )}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        {link.label}
+                    </Link>
+                    );
+                })}
+                <div className="h-px bg-white/10 my-2" />
+                <div className="flex items-center gap-4 px-4 py-2 text-gray-300">
+                     <User className="w-5 h-5" />
+                     <span>Profile</span>
+                </div>
+            </div>
+        )}
       </div>
   );
 }
