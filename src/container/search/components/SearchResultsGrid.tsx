@@ -1,6 +1,8 @@
 "use client";
 
 import { MovieCard } from "@/container/home/components/MovieCard";
+import Link from "next/link";
+import NextImage from "next/image";
 import { Movie, getImageUrl } from "@/services/tmdb";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +32,7 @@ export function SearchResultsGrid({ movies, viewMode }: SearchResultsGridProps) 
                 <div key={movie.id} className="w-full">
                     {viewMode === "grid" ? (
                         <MovieCard 
+                            id={movie.id}
                             title={movie.title || movie.name || "Untitled"}
                             year={new Date(movie.release_date || movie.first_air_date || "").getFullYear().toString()}
                             rating={movie.vote_average}
@@ -38,20 +41,22 @@ export function SearchResultsGrid({ movies, viewMode }: SearchResultsGridProps) 
                         />
                     ) : (
                        // Simple list view implementation
-                       <div className="flex gap-4 bg-zinc-900/50 p-4 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
-                            <div className="w-[100px] aspect-[2/3] shrink-0 relative rounded-lg overflow-hidden">
-                                <img src={getImageUrl(movie.poster_path)} alt={movie.title} className="object-cover w-full h-full" />
-                            </div>
-                            <div className="flex-1 py-1">
-                                <h3 className="text-xl font-bold text-white mb-2">{movie.title || movie.name}</h3>
-                                <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
-                                    <span>{new Date(movie.release_date || movie.first_air_date || "").getFullYear()}</span>
-                                    <span>•</span>
-                                    <span className="text-yellow-500 font-bold">★ {movie.vote_average.toFixed(1)}</span>
+                       <Link href={`/movies/${movie.id}`}>
+                           <div className="flex gap-4 bg-zinc-900/50 p-4 rounded-xl border border-white/5 hover:border-white/10 transition-colors cursor-pointer">
+                                <div className="w-[100px] aspect-[2/3] shrink-0 relative rounded-lg overflow-hidden">
+                                    <NextImage src={getImageUrl(movie.poster_path)} alt={movie.title || "Movie poster"} fill className="object-cover" />
                                 </div>
-                                <p className="text-gray-400 text-sm line-clamp-3 md:line-clamp-4">{movie.overview}</p>
-                            </div>
-                       </div>
+                                <div className="flex-1 py-1">
+                                    <h3 className="text-xl font-bold text-white mb-2">{movie.title || movie.name}</h3>
+                                    <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
+                                        <span>{new Date(movie.release_date || movie.first_air_date || "").getFullYear()}</span>
+                                        <span>•</span>
+                                        <span className="text-yellow-500 font-bold">★ {movie.vote_average.toFixed(1)}</span>
+                                    </div>
+                                    <p className="text-gray-400 text-sm line-clamp-3 md:line-clamp-4">{movie.overview}</p>
+                                </div>
+                           </div>
+                       </Link>
                     )}
                 </div>
             ))}

@@ -47,6 +47,7 @@ export async function Trending({ timeWindow = "day" }: TrendingProps) {
         {movies.map((movie) => (
           <div key={movie.id} className="snap-start shrink-0">
             <MovieCard
+              id={movie.id}
               title={movie.title || movie.name || "Unknown"}
               year={
                 (movie.release_date || movie.first_air_date || "").split("-")[0] || "N/A"

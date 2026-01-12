@@ -144,6 +144,74 @@ export async function searchMovies(
   }
 }
 
+// ... existing code ...
+
+export interface MovieDetail extends Movie {
+  genres: Genre[];
+  runtime: number;
+  tagline: string;
+  status: string;
+  budget: number;
+  revenue: number;
+  homepage: string;
+  imdb_id: string;
+}
+
+export interface Cast {
+  id: number;
+  name: string;
+  character: string;
+  profile_path: string | null;
+  order: number;
+}
+
+export interface Crew {
+  id: number;
+  name: string;
+  job: string;
+  department: string;
+  profile_path: string | null;
+}
+
+export interface Credits {
+  cast: Cast[];
+  crew: Crew[];
+}
+
+// ... existing fetchTMDB function ...
+
+export async function getMovieDetail(id: string): Promise<MovieDetail | null> {
+  try {
+    const data = await fetchTMDB<MovieDetail>(`/movie/${id}`);
+    return data;
+  } catch (error) {
+    console.error(`Error fetching movie detail for id ${id}:`, error);
+    return null;
+  }
+}
+
+export async function getMovieCredits(id: string): Promise<Credits | null> {
+  try {
+    const data = await fetchTMDB<Credits>(`/movie/${id}/credits`);
+    return data;
+  } catch (error) {
+    console.error(`Error fetching movie credits for id ${id}:`, error);
+    return null;
+  }
+}
+
+export async function getMovieRecommendations(id: string): Promise<Movie[]> {
+  try {
+    const data = await fetchTMDB<TrendingResponse>(
+      `/movie/${id}/recommendations`
+    );
+    return data.results;
+  } catch (error) {
+    console.error(`Error fetching movie recommendations for id ${id}:`, error);
+    return [];
+  }
+}
+
 export function getImageUrl(
   path: string | null | undefined,
   size: "w500" | "original" = "w500"

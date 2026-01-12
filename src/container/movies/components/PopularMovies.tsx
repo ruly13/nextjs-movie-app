@@ -20,6 +20,7 @@ export function PopularMovies({ movies }: PopularMoviesProps) {
         {movies.slice(0, 12).map((movie) => (
           <div key={movie.id} className="snap-start shrink-0 w-[160px] md:w-auto">
             <MovieCard 
+              id={movie.id}
               title={movie.title || movie.name || "Untitled"}
               year={new Date(movie.release_date || movie.first_air_date || "").getFullYear().toString()}
               rating={movie.vote_average}

@@ -23,6 +23,7 @@ export function TopRatedMovies({ movies }: TopRatedMoviesProps) {
             </span>
             <div className="relative z-10 transition-transform hover:z-20">
                <MovieCard 
+                id={movie.id}
                 title={movie.title || movie.name || "Untitled"}
                 year={new Date(movie.release_date || movie.first_air_date || "").getFullYear().toString()}
                 rating={movie.vote_average}
