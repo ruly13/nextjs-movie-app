@@ -190,7 +190,40 @@ export async function getMovieDetail(id: string): Promise<MovieDetail | null> {
   }
 }
 
+// ... existing interfaces ...
+
+export interface Video {
+  id: string;
+  iso_639_1: string;
+  iso_3166_1: string;
+  key: string;
+  name: string;
+  site: string;
+  size: number;
+  type: string;
+  official: boolean;
+  published_at: string;
+}
+
+interface VideoResponse {
+  id: number;
+  results: Video[];
+}
+
+// ... existing fetch functions ...
+
+export async function getMovieVideos(id: string): Promise<Video[]> {
+  try {
+    const data = await fetchTMDB<VideoResponse>(`/movie/${id}/videos`);
+    return data.results;
+  } catch (error) {
+    console.error(`Error fetching movie videos for id ${id}:`, error);
+    return [];
+  }
+}
+
 export async function getMovieCredits(id: string): Promise<Credits | null> {
+// ... existing implementation ...
   try {
     const data = await fetchTMDB<Credits>(`/movie/${id}/credits`);
     return data;
