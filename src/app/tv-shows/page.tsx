@@ -1,9 +1,3 @@
-import { MovieCard } from "@/container/home/components/MovieCard";
+import TVShowsPage from "@/container/tv-shows/page";
 
-export default function TVShows() {
-    return (
-        <div>
-            <h1>TV Shows</h1>
-        </div>
-    );
-}
+export default TVShowsPage;

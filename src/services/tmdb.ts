@@ -13,6 +13,7 @@ export interface Movie {
   overview: string;
   media_type?: string;
   genre_ids?: number[];
+  original_language?: string;
 }
 
 export interface Genre {
@@ -88,6 +89,50 @@ export async function getTopRatedMovies(): Promise<Movie[]> {
   }
 }
 
+export async function getTrendingTVShows(
+  timeWindow: "day" | "week" = "day"
+): Promise<Movie[]> {
+  try {
+    const data = await fetchTMDB<TrendingResponse>(
+      `/trending/tv/${timeWindow}`
+    );
+    return data.results;
+  } catch (error) {
+    console.error("Error fetching trending TV shows:", error);
+    return [];
+  }
+}
+
+export async function getPopularTVShows(): Promise<Movie[]> {
+  try {
+    const data = await fetchTMDB<TrendingResponse>("/tv/popular");
+    return data.results;
+  } catch (error) {
+    console.error("Error fetching popular TV shows:", error);
+    return [];
+  }
+}
+
+export async function getTopRatedTVShows(): Promise<Movie[]> {
+  try {
+    const data = await fetchTMDB<TrendingResponse>("/tv/top_rated");
+    return data.results;
+  } catch (error) {
+    console.error("Error fetching top rated TV shows:", error);
+    return [];
+  }
+}
+
+export async function getOnTheAirTVShows(): Promise<Movie[]> {
+  try {
+    const data = await fetchTMDB<TrendingResponse>("/tv/on_the_air");
+    return data.results;
+  } catch (error) {
+    console.error("Error fetching on the air TV shows:", error);
+    return [];
+  }
+}
+
 export async function getMoviesByGenre(
   genreId?: number,
   sortBy: string = "popularity.desc"
@@ -118,6 +163,16 @@ export async function getGenres(): Promise<Genre[]> {
     return data.genres;
   } catch (error) {
     console.error("Error fetching genres:", error);
+    return [];
+  }
+}
+
+export async function getTVGenres(): Promise<Genre[]> {
+  try {
+    const data = await fetchTMDB<GenreResponse>("/genre/tv/list");
+    return data.genres;
+  } catch (error) {
+    console.error("Error fetching TV genres:", error);
     return [];
   }
 }
@@ -155,6 +210,9 @@ export interface MovieDetail extends Movie {
   revenue: number;
   homepage: string;
   imdb_id: string;
+  number_of_seasons?: number;
+  number_of_episodes?: number;
+  episode_run_time?: number[];
 }
 
 export interface Cast {
@@ -190,6 +248,16 @@ export async function getMovieDetail(id: string): Promise<MovieDetail | null> {
   }
 }
 
+export async function getTVShowDetail(id: string): Promise<MovieDetail | null> {
+  try {
+    const data = await fetchTMDB<MovieDetail>(`/tv/${id}`);
+    return data;
+  } catch (error) {
+    console.error(`Error fetching TV show detail for id ${id}:`, error);
+    return null;
+  }
+}
+
 // ... existing interfaces ...
 
 export interface Video {
@@ -203,6 +271,34 @@ export interface Video {
   type: string;
   official: boolean;
   published_at: string;
+}
+
+export interface Episode {
+  id: number;
+  name: string;
+  overview: string;
+  vote_average: number;
+  vote_count: number;
+  air_date: string;
+  episode_number: number;
+  episode_type: string;
+  production_code: string;
+  runtime: number | null;
+  season_number: number;
+  show_id: number;
+  still_path: string | null;
+}
+
+interface SeasonDetail {
+  _id: string;
+  air_date: string;
+  episodes: Episode[];
+  name: string;
+  overview: string;
+  id: number;
+  poster_path: string | null;
+  season_number: number;
+  vote_average: number;
 }
 
 interface VideoResponse {
@@ -222,13 +318,69 @@ export async function getMovieVideos(id: string): Promise<Video[]> {
   }
 }
 
+export async function getTVShowVideos(id: string): Promise<Video[]> {
+  try {
+    const data = await fetchTMDB<VideoResponse>(`/tv/${id}/videos`);
+    return data.results;
+  } catch (error) {
+    console.error(`Error fetching TV show videos for id ${id}:`, error);
+    return [];
+  }
+}
+
+export async function getTVShowEpisodes(
+  tvId: string,
+  seasonNumber: number = 1
+): Promise<Episode[]> {
+  try {
+    const data = await fetchTMDB<SeasonDetail>(
+      `/tv/${tvId}/season/${seasonNumber}`
+    );
+    return data.episodes;
+  } catch (error) {
+    console.error(
+      `Error fetching TV show episodes for id ${tvId} season ${seasonNumber}:`,
+      error
+    );
+    return [];
+  }
+}
+
+export async function getTVShowEpisodeVideos(
+  tvId: number,
+  seasonNumber: number,
+  episodeNumber: number
+): Promise<Video[]> {
+  try {
+    const data = await fetchTMDB<VideoResponse>(
+      `/tv/${tvId}/season/${seasonNumber}/episode/${episodeNumber}/videos`
+    );
+    return data.results;
+  } catch (error) {
+    console.error(
+      `Error fetching videos for TV show ${tvId} S${seasonNumber}E${episodeNumber}:`,
+      error
+    );
+    return [];
+  }
+}
+
 export async function getMovieCredits(id: string): Promise<Credits | null> {
-// ... existing implementation ...
   try {
     const data = await fetchTMDB<Credits>(`/movie/${id}/credits`);
     return data;
   } catch (error) {
     console.error(`Error fetching movie credits for id ${id}:`, error);
+    return null;
+  }
+}
+
+export async function getTVShowCredits(id: string): Promise<Credits | null> {
+  try {
+    const data = await fetchTMDB<Credits>(`/tv/${id}/credits`);
+    return data;
+  } catch (error) {
+    console.error(`Error fetching TV show credits for id ${id}:`, error);
     return null;
   }
 }
@@ -241,6 +393,19 @@ export async function getMovieRecommendations(id: string): Promise<Movie[]> {
     return data.results;
   } catch (error) {
     console.error(`Error fetching movie recommendations for id ${id}:`, error);
+    return [];
+  }
+}
+
+export async function getTVShowRecommendations(id: string): Promise<Movie[]> {
+  try {
+    const data = await fetchTMDB<TrendingResponse>(`/tv/${id}/recommendations`);
+    return data.results;
+  } catch (error) {
+    console.error(
+      `Error fetching TV show recommendations for id ${id}:`,
+      error
+    );
     return [];
   }
 }

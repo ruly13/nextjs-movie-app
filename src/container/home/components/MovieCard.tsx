@@ -10,11 +10,13 @@ interface MovieCardProps {
   rating: number;
   imageUrl: string;
   className?: string;
+  mediaType?: "movie" | "tv";
 }
 
-export function MovieCard({ id, title, year, rating, imageUrl, className }: MovieCardProps) {
+export function MovieCard({ id, title, year, rating, imageUrl, className, mediaType = "movie" }: MovieCardProps) {
+  const href = mediaType === "movie" ? `/movies/${id}` : `/tv-shows/${id}`;
   return (
-    <Link href={`/movies/${id}`}>
+    <Link href={href}>
       <div className={cn("group relative flex flex-col gap-2 cursor-pointer w-[150px] md:w-[200px]", className)}>
         <div className="relative w-full aspect-[2/3] rounded-xl overflow-hidden shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-white/20">
           <Image 
