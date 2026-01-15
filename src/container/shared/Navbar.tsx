@@ -39,7 +39,7 @@ function NavbarContent() {
     { href: "/", label: "Home" },
     { href: "/movies", label: "Movies" },
     { href: "/tv-shows", label: "TV Shows" },
-    { href: "/my-list", label: "My List" },
+    // { href: "/my-list", label: "My List" },
   ];
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
