@@ -6,7 +6,7 @@ export function Footer() {
                 © 2024 MovieDB. All rights reserved.
             </p>
             <p className="text-sm text-muted-foreground md:hidden">
-                © 2024 MovieDB.
+                © 2025 MovieDB.
             </p>
             <p className="text-sm text-muted-foreground mt-1">
                 Designed & Developed by <span className="text-white font-medium">Rohmat Choiruly Anwar</span>
